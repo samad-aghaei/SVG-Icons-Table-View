@@ -1,0 +1,42 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>SVG Icon Map Test</title>
+
+    <style>
+        html
+        {
+            background: antiquewhite;
+        }
+
+        .masked
+        {
+            display: inline-block;
+            width: 84px;
+            aspect-ratio: 1/1;
+            background: black;
+            mask: url(./src/icons.svg#youtube-circular) center / contain no-repeat;
+            -webkit-mask: url(./src/icons.svg#youtube-circular) center / contain no-repeat;
+        }
+        #mask-black
+        {
+            background: black;
+        }
+
+        #mask-green
+        {
+            background: green;
+        }
+    </style>
+</head>
+<body>
+
+<div style="with:133px; height: 174px; background: url(./src/icons.svg#youtube-circular) no-repeat;"></div><br>
+<div id="mask-green" class="masked"></div><br>
+<img src="./src/icons.svg#youtube-squircle" width="150"><br><br>
+<object type="image/svg+xml" width="84" height="auto" data="./src/icons.svg#youtube"></object><br>
+<div id="mask-black" class="masked"></div>
+
+</body>
+</html>
