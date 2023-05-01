@@ -78,7 +78,7 @@ Fragment ids ``-circular`` and ``-squircle`` will frame the icons into a rounded
 </body>
 </html>
  ```
-[Demo](https://samad-aghaei.github.io/Viewable-SVG-Icon-Bundle/test.html)
+[Demo](https://samad-aghaei.github.io/SVG-Icons-Table-View/test.html)
 
 # To view the icons in a table
 
@@ -89,7 +89,7 @@ Jost drag and drop the SVG bundled file into your browser or open it up as a url
 
 By clicking on any of the icons, its ID would be copied to clipboard automatically.
 You can see the IDs right on the bottom of the icons, and in the addressbar. If reload the page, the icon itself will be showed.
-[Demo](https://samad-aghaei.github.io/Viewable-SVG-Icon-Bundle/src/icons.svg#tiktok-circular)
+[Demo](https://samad-aghaei.github.io/SVG-Icons-Table-View/src/icons.svg#tiktok-circular)
 ![image info](./assets/icon.png)
 
 
