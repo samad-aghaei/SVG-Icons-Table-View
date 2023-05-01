@@ -84,7 +84,7 @@ Fragment ids ``-circular`` and ``-squircle`` will frame the icons into a rounded
 
 Additionally, we can view those icons all together as an icon table right in the browser, easily find their IDs and use them.
 Jost drag and drop the SVG bundled file into your browser or open it up as a url.
-[Demo](https://samad-aghaei.github.io/Viewable-SVG-Icon-Bundle/src/icons.svg)
+[Demo](https://samad-aghaei.github.io/SVG-Icons-Table-View/src/icons.svg)
 ![image info](./assets/table.png)
 
 By clicking on any of the icons, its ID would be copied to clipboard automatically.
