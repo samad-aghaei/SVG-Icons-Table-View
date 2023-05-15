@@ -1,6 +1,6 @@
 # Combine multiple SVG path groups as symbol, create new icons by rotating/framing/painting them and view them as SVG Icon Table
 
-Combinine multiple SVG path groups as symbols into a single SVG bundle file.
+Combine multiple SVG path groups as symbols into a single SVG bundle file.
 This project aimed to be able to to create a new icon from the same symbol by rotating them or framing them in rectangle, circle or rounded rectangle.
 ```svg
 <symbol id='$arrow'>
