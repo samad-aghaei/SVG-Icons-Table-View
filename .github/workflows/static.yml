@@ -28,7 +28,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
 
@@ -48,7 +48,7 @@ jobs:
           # Extract tar.gz to dist/ (assumes top-level contents; adjust if nested)
           tar -xzf release.tar.gz -C dist/ --strip-components=1
           
-          # Clean up temp file
+          # Clean up temp file (no .tar.gz saved to repo)
           rm release.tar.gz
 
       - name: Ensure dist/ is in .gitignore
@@ -62,14 +62,14 @@ jobs:
           fi
 
       - name: Setup Pages
-        uses: actions/configure-pages@v3
+        uses: actions/configure-pages@v5
 
       - name: Upload artifact
-        uses: actions/upload-pages-artifact@v1
+        uses: actions/upload-pages-artifact@v3
         with:
           # Upload dist/ directory contents (excludes tar.gz and keeps it untracked)
           path: 'dist'
 
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v2
+        uses: actions/deploy-pages@v4
