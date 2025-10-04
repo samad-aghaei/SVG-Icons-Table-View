@@ -7,20 +7,27 @@ on:
   # Triggers on new release publication
   release:
     types: [published]
-  # Allows you to run this workflow manually from the Actions tab
+  # Allows manual run with custom tag input
   workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Tag to deploy (e.g., v0.2.2)'
+        required: false
+        default: 'v0.1.1'
+        type: string
+
 # Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages and repo writes
 permissions:
   contents: write
   pages: write
   id-token: write
-# Allow only one concurrent deployment, skipping runs queued between the run in-progress and latest queued.
-# However, do NOT cancel in-progress runs as we want to allow these production deployments to complete.
+
+# Allow only one concurrent deployment
 concurrency:
   group: "pages"
   cancel-in-progress: false
+
 jobs:
-  # Single deploy job since we're just deploying
   deploy:
     environment:
       name: github-pages
@@ -34,8 +41,8 @@ jobs:
 
       - name: Download Release Tarball to releases/
         run: |
-          # Determine tag: Use release tag if triggered by release, else 'v0.1.1' for manual/push runs
-          TAG=${{ github.event_name == 'release' && github.event.release.tag_name || 'v0.1.1' }}
+          # Determine tag: Manual input > release tag > fallback
+          TAG=${{ github.event.inputs.tag || (github.event_name == 'release' && github.event.release.tag_name) || 'v0.1.1' }}
           echo "Using tag: $TAG"
           
           # Create releases/ directory
@@ -44,17 +51,28 @@ jobs:
           # Download tar.gz directly to releases/ (no extraction)
           curl -L -o "releases/${TAG}.tar.gz" \
             "https://codeload.github.com/${{ github.repository }}/tar.gz/refs/tags/$TAG"
+          
+          # Optional: Add a simple index.html listing downloads (fixes root 404)
+          cat > releases/index.html << EOF
+          <!DOCTYPE html>
+          <html><body>
+          <h1>Available Releases</h1>
+          <ul>
+          <li><a href="v0.1.1.tar.gz">v0.1.1.tar.gz</a></li>
+          <li><a href="v0.2.2.tar.gz">v0.2.2.tar.gz</a></li>  <!-- Add more as needed -->
+          </ul>
+          </body></html>
+          EOF
 
       - name: Ensure releases/ is in .gitignore
         run: |
-          # Append releases/ to .gitignore if not already present
           if ! grep -q "^releases/" .gitignore 2>/dev/null; then
             echo "releases/" >> .gitignore
             git config --global user.name "github-actions[bot]"
             git config --global user.email "github-actions[bot]@users.noreply.github.com"
             git add .gitignore
             git commit -m "Add releases/ to .gitignore" || true
-            git push origin HEAD:${{ github.ref_name }} || true  # Push to branch (not tag); ignore failures
+            git push origin HEAD:Main || true
           fi
 
       - name: Setup Pages
@@ -63,8 +81,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          # Upload releases/ directory contents (serves .tar.gz statically)
-          path: 'releases'
+          path: 'releases'  # Serves releases/ contents at site root (e.g., /v0.2.2.tar.gz)
 
       - name: Deploy to GitHub Pages
         id: deployment
