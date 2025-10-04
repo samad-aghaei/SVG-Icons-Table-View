@@ -1,26 +1,24 @@
 # Simple workflow for deploying static content to GitHub Pages
 name: Deploy static content to Pages
-
 on:
   # Runs on pushes targeting the default branch
   push:
     branches: ["Main"]
-
+  # Triggers on new release publication
+  release:
+    types: [published]
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
-
 # Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
 permissions:
   contents: read
   pages: write
   id-token: write
-
 # Allow only one concurrent deployment, skipping runs queued between the run in-progress and latest queued.
 # However, do NOT cancel in-progress runs as we want to allow these production deployments to complete.
 concurrency:
   group: "pages"
   cancel-in-progress: false
-
 jobs:
   # Single deploy job since we're just deploying
   deploy:
@@ -31,13 +29,47 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Download and Extract Release Tarball to dist/
+        run: |
+          # Determine tag: Use release tag if triggered by release, else 'v0.0.1' for manual/push runs
+          TAG=${{ github.event_name == 'release' && github.event.release.tag_name || 'v0.0.1' }}
+          echo "Using tag: $TAG"
+          
+          # Download tar.gz (for public repos; add auth if private)
+          curl -L -o release.tar.gz \
+            "https://codeload.github.com/${{ github.repository }}/tar.gz/refs/tags/$TAG"
+          
+          # Create dist/ directory
+          mkdir -p dist
+          
+          # Extract tar.gz to dist/ (assumes top-level contents; adjust if nested)
+          tar -xzf release.tar.gz -C dist/ --strip-components=1
+          
+          # Clean up temp file
+          rm release.tar.gz
+
+      - name: Ensure dist/ is in .gitignore
+        run: |
+          # Append dist/ to .gitignore if not already present
+          if ! grep -q "^dist/" .gitignore 2>/dev/null; then
+            echo "dist/" >> .gitignore
+            git add .gitignore
+            git commit -m "Add dist/ to .gitignore" || true
+            git push
+          fi
+
       - name: Setup Pages
         uses: actions/configure-pages@v3
+
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v1
         with:
-          # Upload entire repository
-          path: '.'
+          # Upload dist/ directory contents (excludes tar.gz and keeps it untracked)
+          path: 'dist'
+
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v2
